@@ -1,0 +1,44 @@
+---
+title: "ACST886_Assignment1_Q2"
+author: "Shaofei Shen"
+date: "2019/8/22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Q2
+#### (a)
+Scott and Bill have the same contract with term 30 years, total loan owed at the beginning is 600,000 @3.5%. Calculate annual payment using $PV=PMT*\sum_{n=1}^{30} \frac{1}{(1+i)^n}$  and gives the same result as Bill 32622.8
+```{r}
+PV<-function(x){
+  ##generate the annual payment vetor for 30 yrs
+  PMT<-c(rep(x,30))
+  ##generate the dicount vector for 30 yrs 
+  v<-1/(1+0.035)^(1:30)
+  PV<-sum(PMT*v)-600000
+  return(PV)
+}
+uniroot(PV,c(0,50000))
+```
+#### (b)
+As scott has an offset account and he can use the interest and principle to pay the hone loan. Each payment will be larger and reduce the term of home loan. To include the interest from offset account as repayments, the present value of total loan owned is 500000 and scott need to pay the annaul payment 32622.8. the bank will receive 36133.8 (32633.8+3500) every year and using 500000=32622.8*$a_n$ and find out n at 3.5%. 
+```{r}
+PV<-function(n){
+  v<-1/(1+0.035)
+  PMT<-(32622.8*(1-v^n)/0.035)
+  PV<-PMT-500000
+  return(PV)
+}
+uniroot(PV,c(0,30))
+```
+so the last payment will be made on 23 years later, which is 19th March 2042.
+
+```{r}
+s22<- (1.035^22-1)/0.035
+lastpayment<-(600000*1.035^22 - (3500+32622.8)*s22)*1.035-100000-3500
+lastpayment
+```
+The last payment occurs on 23rd year. we need to calculate the account balance at Yr 22 and accumulate 1 year to find out the last payment. The account balance at Year 22 is $AB=600000*(1+i)^{22}-(3500+32622.8)S_{22}$. The last payment from Scott is the account balancein year 22 and acuumulate by 1 year deduce the interest (3500) and principle (100000), which gives 11484.86 
